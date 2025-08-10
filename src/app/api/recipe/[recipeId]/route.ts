@@ -3,10 +3,11 @@ import { container } from '@/container'
 import { RecipeService } from '@/modules/recipe/service'
 import { TYPES } from '@/types'
 import { ZodError } from 'zod'
+import { RequestPathRecipe } from '@/modules/recipe/schema'
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { recipeId: string } }
+    { params }: { params: RequestPathRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
@@ -28,7 +29,7 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { recipeId: string } }
+    { params }: { params: RequestPathRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
@@ -57,7 +58,7 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { recipeId: string } }
+    { params }: { params: RequestPathRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)

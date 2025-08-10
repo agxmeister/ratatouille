@@ -14,7 +14,8 @@
     "react-dom": "18.3.1",
     "reflect-metadata": "^0.2.2",
     "uuid": "^11.1.0",
-    "zod": "^4.0.17"
+    "zod": "^4.0.17",
+    "zod-openapi": "^5.3.1"
   },
   "devDependencies": {
     "@types/node": "22.1.0",

@@ -11,16 +11,14 @@ export const openApiDocument = createDocument({
     info: {
         title: 'Ratatouille API',
         version: '1.0.0',
-        description: 'API for interacting with the Ratatouille service'
     },
     paths: {
         '/health': {
             get: {
-                summary: 'Health check',
-                description: 'Check the health status of the API',
+                summary: 'Check the health status of the service.',
                 responses: {
                     '200': {
-                        description: 'API is healthy',
+                        description: 'Service is healthy',
                         content: {
                             'application/json': {
                                 schema: HealthResponseSchema
@@ -32,11 +30,10 @@ export const openApiDocument = createDocument({
         },
         '/recipe': {
             get: {
-                summary: 'Get all recipes',
-                description: 'Retrieve a list of all recipes',
+                summary: 'Retrieve a list of all recipes.',
                 responses: {
                     '200': {
-                        description: 'List of recipes retrieved successfully',
+                        description: 'Recipes retrieved successfully',
                         content: {
                             'application/json': {
                                 schema: z.array(RecipeSchema)
@@ -49,8 +46,7 @@ export const openApiDocument = createDocument({
                 }
             },
             post: {
-                summary: 'Create a new recipe',
-                description: 'Create a new recipe with the provided details',
+                summary: 'Create a new recipe.',
                 requestBody: {
                     required: true,
                     content: {
@@ -79,8 +75,7 @@ export const openApiDocument = createDocument({
         },
         '/recipe/{recipeId}': {
             get: {
-                summary: 'Get recipe by ID',
-                description: 'Retrieve a specific recipe by its ID',
+                summary: 'Retrieve a recipe by its identity.',
                 requestParams: {
                     path: RequestPathRecipeSchema,
                 },
@@ -102,8 +97,7 @@ export const openApiDocument = createDocument({
                 }
             },
             put: {
-                summary: 'Update recipe',
-                description: 'Update an existing recipe with new details',
+                summary: 'Update an existing recipe with new details.',
                 requestParams: {
                     path: RequestPathRecipeSchema,
                 },
@@ -136,8 +130,7 @@ export const openApiDocument = createDocument({
                 }
             },
             delete: {
-                summary: 'Delete recipe',
-                description: 'Delete a recipe by its ID',
+                summary: 'Delete a recipe by its identity.',
                 requestParams: {
                     path: RequestPathRecipeSchema,
                 },
@@ -156,8 +149,7 @@ export const openApiDocument = createDocument({
         },
         '/openapi': {
             get: {
-                summary: 'Get OpenAPI specification',
-                description: 'Retrieve the OpenAPI specification for this API',
+                summary: 'Retrieve the OpenAPI specification.',
                 responses: {
                     '200': {
                         description: 'OpenAPI specification retrieved successfully',

@@ -12,74 +12,87 @@ export interface IRecipeRepository {
 
 export class FileRecipeRepository implements IRecipeRepository {
     private dataDir: string
-    private filePath: string
+    private recipesDir: string
 
     constructor() {
         this.dataDir = path.join(process.cwd(), 'data')
-        this.filePath = path.join(this.dataDir, 'recipes.json')
+        this.recipesDir = path.join(this.dataDir, 'recipes')
     }
 
     private async ensureDataDir(): Promise<void> {
         try {
-            await fs.access(this.dataDir)
+            await fs.access(this.recipesDir)
         } catch {
-            await fs.mkdir(this.dataDir, { recursive: true })
+            await fs.mkdir(this.recipesDir, { recursive: true })
         }
     }
 
-    private async loadRecipes(): Promise<Recipe[]> {
+    private getRecipeFilePath(id: string): string {
+        return path.join(this.recipesDir, `${id}.json`)
+    }
+
+    async findAll(): Promise<Recipe[]> {
         await this.ensureDataDir()
         try {
-            const data = await fs.readFile(this.filePath, 'utf-8')
-            return JSON.parse(data)
+            const files = await fs.readdir(this.recipesDir)
+            const jsonFiles = files.filter(file => file.endsWith('.json'))
+            
+            const recipes = await Promise.all(
+                jsonFiles.map(async (file) => {
+                    const filePath = path.join(this.recipesDir, file)
+                    const data = await fs.readFile(filePath, 'utf-8')
+                    return JSON.parse(data) as Recipe
+                })
+            )
+            
+            return recipes.sort((a, b) => 
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
         } catch {
             return []
         }
     }
 
-    private async saveRecipes(recipes: Recipe[]): Promise<void> {
-        await this.ensureDataDir()
-        await fs.writeFile(this.filePath, JSON.stringify(recipes, null, 2))
-    }
-
-    async findAll(): Promise<Recipe[]> {
-        return this.loadRecipes()
-    }
-
     async findById(id: string): Promise<Recipe | null> {
-        const recipes = await this.loadRecipes()
-        return recipes.find(recipe => recipe.id === id) || null
+        await this.ensureDataDir()
+        try {
+            const filePath = this.getRecipeFilePath(id)
+            const data = await fs.readFile(filePath, 'utf-8')
+            return JSON.parse(data) as Recipe
+        } catch {
+            return null
+        }
     }
 
     async create(recipe: Recipe): Promise<Recipe> {
-        const recipes = await this.loadRecipes()
-        recipes.push(recipe)
-        await this.saveRecipes(recipes)
+        await this.ensureDataDir()
+        const filePath = this.getRecipeFilePath(recipe.id)
+        await fs.writeFile(filePath, JSON.stringify(recipe, null, 2))
         return recipe
     }
 
     async update(id: string, recipe: Recipe): Promise<Recipe | null> {
-        const recipes = await this.loadRecipes()
-        const index = recipes.findIndex(r => r.id === id)
+        await this.ensureDataDir()
+        const filePath = this.getRecipeFilePath(id)
         
-        if (index === -1) {
+        try {
+            await fs.access(filePath)
+            await fs.writeFile(filePath, JSON.stringify(recipe, null, 2))
+            return recipe
+        } catch {
             return null
         }
-        
-        recipes[index] = recipe
-        await this.saveRecipes(recipes)
-        return recipe
     }
 
     async delete(id: string): Promise<boolean> {
-        const recipes = await this.loadRecipes()
-        const filteredRecipes = recipes.filter(recipe => recipe.id !== id)
+        await this.ensureDataDir()
+        const filePath = this.getRecipeFilePath(id)
         
-        if (filteredRecipes.length === recipes.length) {
+        try {
+            await fs.unlink(filePath)
+            return true
+        } catch {
             return false
         }
-        
-        await this.saveRecipes(filteredRecipes)
-        return true
     }
 }

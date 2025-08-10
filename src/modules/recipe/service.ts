@@ -1,5 +1,6 @@
 import { Recipe, CreateRecipe, UpdateRecipe, CreateRecipeSchema, UpdateRecipeSchema } from './schema'
 import { IRecipeRepository, FileRecipeRepository } from './repository'
+import { v4 as uuidv4 } from 'uuid'
 
 export class RecipeService {
     private repository: IRecipeRepository
@@ -21,7 +22,7 @@ export class RecipeService {
         
         const newRecipe: Recipe = {
             ...validatedData,
-            id: Date.now().toString(),
+            id: uuidv4(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         }

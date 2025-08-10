@@ -1,0 +1,15 @@
+# Dependencies
+/node_modules
+
+# Next.js
+/.next
+
+# TypeScript
+next-env.d.ts
+
+# Environment
+.env
+
+# Misc
+.DS_Store
+.idea

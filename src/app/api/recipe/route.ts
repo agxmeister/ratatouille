@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { recipeService } from '@/modules/recipe/service'
+import { container } from '@/container'
+import { RecipeService } from '@/modules/recipe/service'
+import { TYPES } from '@/types'
 import { ZodError } from 'zod'
 
 export async function GET() {
     try {
+        const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const recipes = await recipeService.getAllRecipes()
         return NextResponse.json(recipes)
     } catch (error) {
@@ -16,13 +19,14 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
     try {
+        const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const body = await request.json()
         const recipe = await recipeService.createRecipe(body)
         return NextResponse.json(recipe, { status: 201 })
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json(
-                { error: 'Validation failed', details: error.errors },
+                { error: 'Validation failed', details: error.issues },
                 { status: 400 }
             )
         }

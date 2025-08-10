@@ -1,12 +1,12 @@
+import { inject, injectable } from 'inversify'
 import { Recipe, CreateRecipe, UpdateRecipe, CreateRecipeSchema, UpdateRecipeSchema } from './schema'
-import { IRecipeRepository, FileRecipeRepository } from './repository'
+import type { IRecipeRepository } from './repository'
 import { v4 as uuidv4 } from 'uuid'
+import { TYPES } from '@/types'
 
+@injectable()
 export class RecipeService {
-    private repository: IRecipeRepository
-
-    constructor(repository?: IRecipeRepository) {
-        this.repository = repository || new FileRecipeRepository()
+    constructor(@inject(TYPES.RecipeRepository) private readonly repository: IRecipeRepository) {
     }
 
     async getAllRecipes(): Promise<Recipe[]> {
@@ -51,5 +51,3 @@ export class RecipeService {
         return this.repository.delete(id)
     }
 }
-
-export const recipeService = new RecipeService()

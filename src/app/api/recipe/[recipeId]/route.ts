@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { recipeService } from '@/modules/recipe/service'
+import { container } from '@/container'
+import { RecipeService } from '@/modules/recipe/service'
+import { TYPES } from '@/types'
 import { ZodError } from 'zod'
 
 export async function GET(
@@ -7,6 +9,7 @@ export async function GET(
     { params }: { params: { recipeId: string } }
 ) {
     try {
+        const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const recipe = await recipeService.getRecipeById(params.recipeId)
         if (!recipe) {
             return NextResponse.json(
@@ -28,6 +31,7 @@ export async function PUT(
     { params }: { params: { recipeId: string } }
 ) {
     try {
+        const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const body = await request.json()
         const recipe = await recipeService.updateRecipe(params.recipeId, body)
         if (!recipe) {
@@ -40,7 +44,7 @@ export async function PUT(
     } catch (error) {
         if (error instanceof ZodError) {
             return NextResponse.json(
-                { error: 'Validation failed', details: error.errors },
+                { error: 'Validation failed', details: error.issues },
                 { status: 400 }
             )
         }
@@ -56,6 +60,7 @@ export async function DELETE(
     { params }: { params: { recipeId: string } }
 ) {
     try {
+        const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const deleted = await recipeService.deleteRecipe(params.recipeId)
         if (!deleted) {
             return NextResponse.json(

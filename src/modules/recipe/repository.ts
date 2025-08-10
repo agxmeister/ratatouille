@@ -1,3 +1,4 @@
+import { injectable } from 'inversify'
 import { Recipe } from './schema'
 import fs from 'fs/promises'
 import path from 'path'
@@ -10,14 +11,10 @@ export interface IRecipeRepository {
     delete(id: string): Promise<boolean>
 }
 
+@injectable()
 export class FileRecipeRepository implements IRecipeRepository {
-    private dataDir: string
-    private recipesDir: string
-
-    constructor() {
-        this.dataDir = path.join(process.cwd(), 'data')
-        this.recipesDir = path.join(this.dataDir, 'recipes')
-    }
+    private readonly dataDir = path.join(process.cwd(), 'data')
+    private readonly recipesDir = path.join(this.dataDir, 'recipes')
 
     private async ensureDataDir(): Promise<void> {
         try {

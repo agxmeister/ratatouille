@@ -1,6 +1,6 @@
 import { createDocument } from 'zod-openapi'
 import { z } from 'zod'
-import { RecipeSchema, CreateRecipeSchema, UpdateRecipeSchema, RequestPathRecipeSchema } from '@/modules/recipe/schema'
+import { RecipeSchema, RecipeListSchema, CreateRecipeSchema, UpdateRecipeSchema, RequestPathRecipeSchema } from '@/modules/recipe/schema'
 
 const HealthResponseSchema = z.object({
     status: z.string().describe('Health status')
@@ -36,7 +36,7 @@ export const openApiDocument = createDocument({
                         description: 'Recipes retrieved successfully',
                         content: {
                             'application/json': {
-                                schema: z.array(RecipeSchema)
+                                schema: z.array(RecipeListSchema)
                             }
                         }
                     },

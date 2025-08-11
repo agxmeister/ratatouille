@@ -21,8 +21,15 @@ export const RecipeSchema = z.object({
     createdAt: z.string()
         .describe('Timestamp when the recipe was created'),
     updatedAt: z.string()
-        .describe('Timestamp when the recipe was last updated')
+        .describe('Timestamp when the recipe was last updated'),
 }).describe('Recipe object')
+
+export const RecipeListSchema = z.object({
+    id: z.string()
+        .describe('Unique identifier for the recipe'),
+    summary: z.string()
+        .describe('A brief summary of the recipe'),
+}).describe('Recipe list item')
 
 export const CreateRecipeSchema = RecipeSchema.omit({ id: true, createdAt: true, updatedAt: true })
     .describe('Recipe creation payload')
@@ -35,6 +42,7 @@ export const RequestPathRecipeSchema = z.object({
 })
 
 export type Recipe = z.infer<typeof RecipeSchema>
+export type RecipeListItem = z.infer<typeof RecipeListSchema>
 export type CreateRecipe = z.infer<typeof CreateRecipeSchema>
 export type UpdateRecipe = z.infer<typeof UpdateRecipeSchema>
 export type RequestPathRecipe = z.infer<typeof RequestPathRecipeSchema>

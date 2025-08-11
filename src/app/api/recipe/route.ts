@@ -8,7 +8,11 @@ export async function GET() {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const recipes = await recipeService.getAllRecipes()
-        return NextResponse.json(recipes)
+        const recipeSummaries = recipes.map(recipe => ({
+            id: recipe.id,
+            summary: recipe.summary
+        }))
+        return NextResponse.json(recipeSummaries)
     } catch (error) {
         return NextResponse.json(
             { error: 'Failed to fetch recipes' },

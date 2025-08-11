@@ -21,10 +21,10 @@ export class RecipeService {
         const validatedData = CreateRecipeSchema.parse(data)
         
         const newRecipe: Recipe = {
-            ...validatedData,
             id: uuidv4(),
+            ...validatedData,
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
         }
         
         return this.repository.create(newRecipe)

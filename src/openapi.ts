@@ -1,6 +1,6 @@
 import { createDocument } from 'zod-openapi'
 import { z } from 'zod'
-import { RecipeSchema, RecipeListSchema, CreateRecipeSchema, UpdateRecipeSchema, RequestPathRecipeSchema } from '@/modules/recipe/schema'
+import { RecipeSchema, RecipeListSchema, CreateRecipeSchema, UpdateRecipeSchema, RequestPathChiefSchema, RequestPathChiefRecipeSchema } from '@/modules/recipe/schema'
 
 const HealthResponseSchema = z.object({
     status: z.string().describe('Health status')
@@ -28,9 +28,12 @@ export const openApiDocument = createDocument({
                 }
             }
         },
-        '/recipe': {
+        '/chief/{chiefId}/recipe': {
             get: {
-                summary: 'Retrieve a list of all recipes.',
+                summary: 'Retrieve a list of all recipes for a specific chief.',
+                requestParams: {
+                    path: RequestPathChiefSchema,
+                },
                 responses: {
                     '200': {
                         description: 'Recipes retrieved successfully',
@@ -46,7 +49,10 @@ export const openApiDocument = createDocument({
                 }
             },
             post: {
-                summary: 'Create a new recipe.',
+                summary: 'Create a new recipe for a specific chief.',
+                requestParams: {
+                    path: RequestPathChiefSchema,
+                },
                 requestBody: {
                     required: true,
                     content: {
@@ -73,11 +79,11 @@ export const openApiDocument = createDocument({
                 }
             }
         },
-        '/recipe/{recipeId}': {
+        '/chief/{chiefId}/recipe/{recipeId}': {
             get: {
-                summary: 'Retrieve a recipe by its identity.',
+                summary: 'Retrieve a recipe by its identity for a specific chief.',
                 requestParams: {
-                    path: RequestPathRecipeSchema,
+                    path: RequestPathChiefRecipeSchema,
                 },
                 responses: {
                     '200': {
@@ -97,9 +103,9 @@ export const openApiDocument = createDocument({
                 }
             },
             put: {
-                summary: 'Update an existing recipe with new details.',
+                summary: 'Update an existing recipe with new details for a specific chief.',
                 requestParams: {
-                    path: RequestPathRecipeSchema,
+                    path: RequestPathChiefRecipeSchema,
                 },
                 requestBody: {
                     required: true,
@@ -130,9 +136,9 @@ export const openApiDocument = createDocument({
                 }
             },
             delete: {
-                summary: 'Delete a recipe by its identity.',
+                summary: 'Delete a recipe by its identity for a specific chief.',
                 requestParams: {
-                    path: RequestPathRecipeSchema,
+                    path: RequestPathChiefRecipeSchema,
                 },
                 responses: {
                     '200': {

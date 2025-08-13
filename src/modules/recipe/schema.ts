@@ -41,8 +41,17 @@ export const RequestPathRecipeSchema = z.object({
         .describe('The ID of the recipe')
 })
 
+export const RequestPathChiefSchema = z.object({
+    chiefId: z.string()
+        .describe('The ID of the chief')
+})
+
+export const RequestPathChiefRecipeSchema = RequestPathChiefSchema.merge(RequestPathRecipeSchema)
+
 export type Recipe = z.infer<typeof RecipeSchema>
 export type RecipeListItem = z.infer<typeof RecipeListSchema>
 export type CreateRecipe = z.infer<typeof CreateRecipeSchema>
 export type UpdateRecipe = z.infer<typeof UpdateRecipeSchema>
 export type RequestPathRecipe = z.infer<typeof RequestPathRecipeSchema>
+export type RequestPathChief = z.infer<typeof RequestPathChiefSchema>
+export type RequestPathChiefRecipe = z.infer<typeof RequestPathChiefRecipeSchema>

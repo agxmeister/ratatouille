@@ -3,15 +3,15 @@ import { container } from '@/container'
 import { RecipeService } from '@/modules/recipe/service'
 import { TYPES } from '@/types'
 import { ZodError } from 'zod'
-import { RequestPathRecipe } from '@/modules/recipe/schema'
+import { RequestPathChiefRecipe } from '@/modules/recipe/schema'
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: RequestPathRecipe }
+    { params }: { params: RequestPathChiefRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
-        const recipe = await recipeService.getRecipeById(params.recipeId)
+        const recipe = await recipeService.getRecipeById(params.chiefId, params.recipeId)
         if (!recipe) {
             return NextResponse.json(
                 { error: 'Recipe not found' },
@@ -29,12 +29,12 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: RequestPathRecipe }
+    { params }: { params: RequestPathChiefRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
         const body = await request.json()
-        const recipe = await recipeService.updateRecipe(params.recipeId, body)
+        const recipe = await recipeService.updateRecipe(params.chiefId, params.recipeId, body)
         if (!recipe) {
             return NextResponse.json(
                 { error: 'Recipe not found' },
@@ -58,11 +58,11 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: RequestPathRecipe }
+    { params }: { params: RequestPathChiefRecipe }
 ) {
     try {
         const recipeService = container.get<RecipeService>(TYPES.RecipeService)
-        const deleted = await recipeService.deleteRecipe(params.recipeId)
+        const deleted = await recipeService.deleteRecipe(params.chiefId, params.recipeId)
         if (!deleted) {
             return NextResponse.json(
                 { error: 'Recipe not found' },

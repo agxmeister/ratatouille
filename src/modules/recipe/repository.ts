@@ -4,39 +4,44 @@ import fs from 'fs/promises'
 import path from 'path'
 
 export interface IRecipeRepository {
-    findAll(): Promise<Recipe[]>
-    findById(id: string): Promise<Recipe | null>
-    create(recipe: Recipe): Promise<Recipe>
-    update(id: string, recipe: Recipe): Promise<Recipe | null>
-    delete(id: string): Promise<boolean>
+    findAll(chiefId: string): Promise<Recipe[]>
+    findById(chiefId: string, recipeId: string): Promise<Recipe | null>
+    create(chiefId: string, recipe: Recipe): Promise<Recipe>
+    update(chiefId: string, recipeId: string, recipe: Recipe): Promise<Recipe | null>
+    delete(chiefId: string, recipeId: string): Promise<boolean>
 }
 
 @injectable()
 export class FileRecipeRepository implements IRecipeRepository {
     private readonly dataDir = path.join(process.cwd(), 'data')
-    private readonly recipesDir = path.join(this.dataDir, 'recipes')
 
-    private async ensureDataDir(): Promise<void> {
+    private getChiefDir(chiefId: string): string {
+        return path.join(this.dataDir, 'chiefs', chiefId, 'recipes')
+    }
+
+    private async ensureDataDir(chiefId: string): Promise<void> {
+        const chiefDir = this.getChiefDir(chiefId)
         try {
-            await fs.access(this.recipesDir)
+            await fs.access(chiefDir)
         } catch {
-            await fs.mkdir(this.recipesDir, { recursive: true })
+            await fs.mkdir(chiefDir, { recursive: true })
         }
     }
 
-    private getRecipeFilePath(id: string): string {
-        return path.join(this.recipesDir, `${id}.json`)
+    private getRecipeFilePath(chiefId: string, recipeId: string): string {
+        return path.join(this.getChiefDir(chiefId), `${recipeId}.json`)
     }
 
-    async findAll(): Promise<Recipe[]> {
-        await this.ensureDataDir()
+    async findAll(chiefId: string): Promise<Recipe[]> {
+        await this.ensureDataDir(chiefId)
+        const chiefDir = this.getChiefDir(chiefId)
         try {
-            const files = await fs.readdir(this.recipesDir)
+            const files = await fs.readdir(chiefDir)
             const jsonFiles = files.filter(file => file.endsWith('.json'))
             
             const recipes = await Promise.all(
                 jsonFiles.map(async (file) => {
-                    const filePath = path.join(this.recipesDir, file)
+                    const filePath = path.join(chiefDir, file)
                     const data = await fs.readFile(filePath, 'utf-8')
                     return JSON.parse(data) as Recipe
                 })
@@ -50,10 +55,10 @@ export class FileRecipeRepository implements IRecipeRepository {
         }
     }
 
-    async findById(id: string): Promise<Recipe | null> {
-        await this.ensureDataDir()
+    async findById(chiefId: string, recipeId: string): Promise<Recipe | null> {
+        await this.ensureDataDir(chiefId)
         try {
-            const filePath = this.getRecipeFilePath(id)
+            const filePath = this.getRecipeFilePath(chiefId, recipeId)
             const data = await fs.readFile(filePath, 'utf-8')
             return JSON.parse(data) as Recipe
         } catch {
@@ -61,16 +66,16 @@ export class FileRecipeRepository implements IRecipeRepository {
         }
     }
 
-    async create(recipe: Recipe): Promise<Recipe> {
-        await this.ensureDataDir()
-        const filePath = this.getRecipeFilePath(recipe.id)
+    async create(chiefId: string, recipe: Recipe): Promise<Recipe> {
+        await this.ensureDataDir(chiefId)
+        const filePath = this.getRecipeFilePath(chiefId, recipe.id)
         await fs.writeFile(filePath, JSON.stringify(recipe, null, 2))
         return recipe
     }
 
-    async update(id: string, recipe: Recipe): Promise<Recipe | null> {
-        await this.ensureDataDir()
-        const filePath = this.getRecipeFilePath(id)
+    async update(chiefId: string, recipeId: string, recipe: Recipe): Promise<Recipe | null> {
+        await this.ensureDataDir(chiefId)
+        const filePath = this.getRecipeFilePath(chiefId, recipeId)
         
         try {
             await fs.access(filePath)
@@ -81,9 +86,9 @@ export class FileRecipeRepository implements IRecipeRepository {
         }
     }
 
-    async delete(id: string): Promise<boolean> {
-        await this.ensureDataDir()
-        const filePath = this.getRecipeFilePath(id)
+    async delete(chiefId: string, recipeId: string): Promise<boolean> {
+        await this.ensureDataDir(chiefId)
+        const filePath = this.getRecipeFilePath(chiefId, recipeId)
         
         try {
             await fs.unlink(filePath)

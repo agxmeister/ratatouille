@@ -1,9 +1,7 @@
 import 'reflect-metadata'
 import { Container } from 'inversify'
 import { TYPES } from './types'
-import type { IRecipeRepository } from './modules/recipe/repository'
-import { FileRecipeRepository } from './modules/recipe/repository'
-import { RecipeService } from './modules/recipe/service'
+import { IRecipeRepository, FileRecipeRepository, RecipeService } from './modules/recipe'
 
 const container = new Container()
 

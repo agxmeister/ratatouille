@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { container } from '@/container'
-import { RecipeService } from '@/modules/recipe/service'
+import { RecipeService, RequestPathChief } from '@/modules/recipe'
 import { TYPES } from '@/types'
 import { ZodError } from 'zod'
-import { RequestPathChief } from '@/modules/recipe/schema'
 
 export async function GET(
     request: NextRequest,
